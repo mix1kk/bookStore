@@ -2,7 +2,9 @@ package com.example.bookStore.Controllers;
 
 import com.example.bookStore.Models.Author;
 import com.example.bookStore.Services.AuthorService;
+import com.example.bookStore.Utils.AuthorExceptions.AuthorErrorResponse;
 import com.example.bookStore.Utils.AuthorExceptions.AuthorNotCreatedException;
+import com.example.bookStore.Utils.AuthorExceptions.AuthorNotDeletedException;
 import com.example.bookStore.Utils.AuthorExceptions.AuthorNotUpdatedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,16 +31,19 @@ public class AuthorController {
     public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
     }
+
     @Operation(summary = "Получить список всех авторов")
     @GetMapping("/authors")
     public List<Author> allAuthors() {
         return new ArrayList<>(authorService.findAll());
     }
+
     @Operation(summary = "Получить автора по id")
     @GetMapping("/author/{id}")
     public Author singleAuthor(@PathVariable("id") int id) {
         return authorService.findById(id);
     }
+
     @Operation(summary = "Создать нового автора")
     @PostMapping("/authors")
     public ResponseEntity<HttpStatus> createAuthor(@RequestBody @Valid Author author, BindingResult bindingResult) {
@@ -53,6 +58,7 @@ public class AuthorController {
         authorService.save(author);
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
     @Operation(summary = "Редактировать автора")
     @PatchMapping("/author/{id}")
     public ResponseEntity<HttpStatus> updateAuthor(@RequestBody @Valid Author author, BindingResult bindingResult, @PathVariable("id") int authorId) {
@@ -66,7 +72,7 @@ public class AuthorController {
             throw new AuthorNotUpdatedException(errorMsg.toString());
         }
 
-        authorService.update(authorId,author);
+        authorService.update(authorId, author);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -77,4 +83,21 @@ public class AuthorController {
         return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 
+    @ExceptionHandler
+    private ResponseEntity<AuthorErrorResponse> handleException(AuthorNotUpdatedException e) {
+        AuthorErrorResponse response = new AuthorErrorResponse(e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<AuthorErrorResponse> handleException(AuthorNotDeletedException e) {
+        AuthorErrorResponse response = new AuthorErrorResponse(e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<AuthorErrorResponse> handleException(AuthorNotCreatedException e) {
+        AuthorErrorResponse response = new AuthorErrorResponse(e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }

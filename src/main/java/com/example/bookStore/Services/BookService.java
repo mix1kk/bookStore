@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -23,6 +24,18 @@ public class BookService {
 
     public List<Book> findAll() {
         return bookRepository.findAll();
+    }
+
+    public List<Book> findByBookTitle(String bookTitle) {
+        return bookRepository.findByBookTitle(bookTitle);
+    }
+
+    public Optional<Book> getBookByISBN(String bookISBN) {
+        return bookRepository.findByISBN(bookISBN);
+    }
+
+    public List<Book> findBookByAuthor(String author) {
+        return bookRepository.findByAuthor(author);
     }
 
     public Book findById(int bookId) {

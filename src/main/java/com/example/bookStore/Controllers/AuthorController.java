@@ -68,7 +68,6 @@ public class AuthorController {
             for (FieldError error : errors) {
                 errorMsg.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("<br>");
             }
-            System.out.println(errorMsg);
             throw new AuthorNotUpdatedException(errorMsg.toString());
         }
 

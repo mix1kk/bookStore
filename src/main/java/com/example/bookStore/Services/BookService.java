@@ -26,8 +26,8 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public List<Book> findByBookTitle(String bookTitle) {
-        return bookRepository.findByBookTitle(bookTitle);
+    public List<Book> findByTitle(String Title) {
+        return bookRepository.findByTitle(Title);
     }
 
     public Optional<Book> getBookByISBN(String bookISBN) {
@@ -35,7 +35,7 @@ public class BookService {
     }
 
     public List<Book> findBookByAuthor(String author) {
-        return bookRepository.findByAuthor(author);
+        return bookRepository.findByAuthors(author);
     }
 
     public Book findById(int bookId) {
@@ -47,7 +47,7 @@ public class BookService {
     }
 
     public void update(int bookId, Book book) {
-        book.setBookId(bookId);
+        book.setBook_id(bookId);
         bookRepository.save(book);
     }
 

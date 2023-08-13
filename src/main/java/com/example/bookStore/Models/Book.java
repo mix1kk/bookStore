@@ -14,18 +14,14 @@ import org.springframework.stereotype.Component;
 @Schema(description = "Сущность книги")
 public class Book {
     @Id
-    @Column(name = "\"bookId\"")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "Идентификатор книги", example = "0")
-    private int bookId;
+    private int book_id;
     @Schema(description = "Название книги", example = "20 лет спустя")
-    @Column(name = "\"bookTitle\"")
-    private String bookTitle;
+    private String title;
     //authors as string authors id's (format: "authorId1_authorId2_..._authorIdn")
-    @Column(name = "\"authors\"")
-    @Schema(description = "Авторы", example = "")
+    @Schema(description = "Авторы", example = "Александр Дюма")
     private String authors;
-    @Column(name = "\"ISBN\"")
-    @Schema(description = "ISBN книги", example = "John Doe")
+    @Schema(description = "ISBN книги", example = "ISBN-13: 978-2-266-11156-0")
     private String ISBN;
 }

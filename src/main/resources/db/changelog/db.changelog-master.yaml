@@ -1,0 +1,71 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog.yaml
+  - changeSet:
+      id: 1
+      author: postgres
+      changes:
+        - createTable:
+            tableName: author
+            columns:
+              - column:
+                  name: authorId
+                  type: integer
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: authorName
+                  type: varchar
+              - column:
+                  name: authorSurname
+                  type: varchar
+              - column:
+                  name: authorMiddlename
+                  type: varchar
+        - addAutoIncrement:
+            catalogName: cat
+            columnDataType: int
+            columnName: authorId
+            defaultOnNull: false
+            generationType: ALWAYS
+            incrementBy: 1
+            schemaName: public
+            startWith: 1
+            tableName: author
+  - changeSet:
+      id: 2
+      author: postgres
+      changes:
+        - createTable:
+            tableName: book
+            columns:
+              - column:
+                  name: bookId
+                  type: integer
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: bookTitle
+                  type: varchar
+              - column:
+                  name: userCompany
+                  type: varchar
+              - column:
+                  name: authors
+                  type: varchar
+              - column:
+                  name: ISBN
+                  type: varchar
+        - addAutoIncrement:
+            catalogName: cat
+            columnDataType: int
+            columnName: bookId
+            defaultOnNull: false
+            generationType: ALWAYS
+            incrementBy: 1
+            schemaName: public
+            startWith: 1
+            tableName: book

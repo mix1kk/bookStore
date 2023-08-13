@@ -48,7 +48,7 @@ databaseChangeLog:
                     nullable: false
 
               - column:
-                  name: Title
+                  name: title
                   type: varchar
               - column:
                   name: userCompany

@@ -19,7 +19,6 @@ public class Book {
     private int book_id;
     @Schema(description = "Название книги", example = "20 лет спустя")
     private String title;
-    //authors as string authors id's (format: "authorId1_authorId2_..._authorIdn")
     @Schema(description = "Авторы", example = "Александр Дюма")
     private String authors;
     @Schema(description = "ISBN книги", example = "ISBN-13: 978-2-266-11156-0")

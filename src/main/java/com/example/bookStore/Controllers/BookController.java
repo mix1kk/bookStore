@@ -3,14 +3,8 @@ package com.example.bookStore.Controllers;
 import com.example.bookStore.Models.Author;
 import com.example.bookStore.Models.Book;
 import com.example.bookStore.Services.BookService;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorErrorResponse;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorNotCreatedException;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorNotDeletedException;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorNotUpdatedException;
-import com.example.bookStore.Utils.BookExceptions.BookErrorResponse;
-import com.example.bookStore.Utils.BookExceptions.BookNotCreatedException;
-import com.example.bookStore.Utils.BookExceptions.BookNotDeletedException;
-import com.example.bookStore.Utils.BookExceptions.BookNotUpdatedException;
+import com.example.bookStore.Utils.AuthorExceptions.*;
+import com.example.bookStore.Utils.BookExceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -42,6 +36,21 @@ public class BookController {
         return new ArrayList<>(bookService.findAll());
     }
 
+    @Operation(summary = "Получить список всех книг по автору")
+    @GetMapping("/books/getByAuthor/{name}")
+    public List<Book> allBooksByAuthor(@PathVariable("name") String name) {
+        return new ArrayList<>(bookService.findBookByAuthor(name));
+    }
+    @Operation(summary = "Получить список всех книг по названию")
+    @GetMapping("/books/getByTitle/{title}")
+    public List<Book> allBooksByTitle(@PathVariable("title") String title) {
+        return new ArrayList<>(bookService.findByTitle(title));
+    }
+    @Operation(summary = "Получить список всех книг по ISBN")
+    @GetMapping("/books/getByISBN/{ISBN}")
+    public List<Book> allBooksByISBN(@PathVariable("ISBN") String ISBN) {
+        return new ArrayList<>(bookService.findBookByISBN(ISBN));
+    }
     @Operation(summary = "Получить книгу по id")
     @GetMapping("/book/{id}")
     public Book singleBook(@PathVariable("id") int id) {
@@ -75,7 +84,9 @@ public class BookController {
 
             throw new BookNotUpdatedException(errorMsg.toString());
         }
-
+        if (id!=0 && bookService.findById(id) == null) {
+            throw new BookNotFoundException();
+        }
         bookService.update(id, book);
         return ResponseEntity.ok(HttpStatus.OK);
     }

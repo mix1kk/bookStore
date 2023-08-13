@@ -58,7 +58,7 @@ public class AuthorController {
 
     @Operation(summary = "Редактировать автора")
     @PatchMapping("/author/{id}")
-    public ResponseEntity<HttpStatus> updateAuthor(@RequestBody @Valid Author author, BindingResult bindingResult, @PathVariable("id") int authorId) {
+    public ResponseEntity<HttpStatus> updateAuthor(@RequestBody @Valid Author author, BindingResult bindingResult, @PathVariable("id") int id) {
         if (bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
             List<FieldError> errors = bindingResult.getFieldErrors();
@@ -67,10 +67,10 @@ public class AuthorController {
             }
             throw new AuthorNotUpdatedException(errorMsg.toString());
         }
-        if (authorService.findById(authorId) == null) {
+        if (id!=0 && authorService.findById(id) == null) {
             throw new AuthorNotFoundException();
         }
-        authorService.update(authorId, author);
+        authorService.update(id, author);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

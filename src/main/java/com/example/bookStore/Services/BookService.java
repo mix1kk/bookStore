@@ -30,7 +30,7 @@ public class BookService {
         return bookRepository.findByTitle(Title);
     }
 
-    public Optional<Book> getBookByISBN(String bookISBN) {
+    public List<Book> findBookByISBN(String bookISBN) {
         return bookRepository.findByISBN(bookISBN);
     }
 

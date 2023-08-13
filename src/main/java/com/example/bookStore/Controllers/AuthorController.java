@@ -2,10 +2,7 @@ package com.example.bookStore.Controllers;
 
 import com.example.bookStore.Models.Author;
 import com.example.bookStore.Services.AuthorService;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorErrorResponse;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorNotCreatedException;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorNotDeletedException;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorNotUpdatedException;
+import com.example.bookStore.Utils.AuthorExceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -68,10 +65,11 @@ public class AuthorController {
             for (FieldError error : errors) {
                 errorMsg.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("<br>");
             }
-            System.out.println(errorMsg);
             throw new AuthorNotUpdatedException(errorMsg.toString());
         }
-
+        if (authorService.findById(authorId) == null) {
+            throw new AuthorNotFoundException();
+        }
         authorService.update(authorId, author);
         return ResponseEntity.ok(HttpStatus.OK);
     }

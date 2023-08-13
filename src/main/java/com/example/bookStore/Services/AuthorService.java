@@ -33,7 +33,7 @@ public class AuthorService {
     }
 
     public void update(int authorId, Author author) {
-        author.setAuthorId(authorId);
+        author.setAuthor_id(authorId);
         authorRepository.save(author);
     }
 

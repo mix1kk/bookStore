@@ -8,25 +8,25 @@ databaseChangeLog:
             tableName: author
             columns:
               - column:
-                  name: authorId
+                  name: author_id
                   type: integer
                   constraints:
                     primaryKey: true
                     nullable: false
 
               - column:
-                  name: authorName
+                  name: author_name
                   type: varchar
               - column:
-                  name: authorSurname
+                  name: author_surname
                   type: varchar
               - column:
-                  name: authorMiddlename
+                  name: author_middlename
                   type: varchar
         - addAutoIncrement:
             catalogName: cat
             columnDataType: int
-            columnName: authorId
+            columnName: author_id
             defaultOnNull: false
             generationType: ALWAYS
             incrementBy: 1
@@ -41,14 +41,14 @@ databaseChangeLog:
             tableName: book
             columns:
               - column:
-                  name: bookId
+                  name: book_id
                   type: integer
                   constraints:
                     primaryKey: true
                     nullable: false
 
               - column:
-                  name: bookTitle
+                  name: Title
                   type: varchar
               - column:
                   name: userCompany
@@ -62,7 +62,7 @@ databaseChangeLog:
         - addAutoIncrement:
             catalogName: cat
             columnDataType: int
-            columnName: bookId
+            columnName: book_id
             defaultOnNull: false
             generationType: ALWAYS
             incrementBy: 1

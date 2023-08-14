@@ -6,6 +6,7 @@ import com.example.bookStore.Repositories.AuthorRepository;
 import com.example.bookStore.Repositories.BookRepository;
 import com.example.bookStore.Utils.AuthorExceptions.AuthorNotExistsException;
 import com.example.bookStore.Utils.AuthorExceptions.AuthorNotFoundException;
+import com.example.bookStore.Utils.BookExceptions.BookAlreadyExistsException;
 import com.example.bookStore.Utils.BookExceptions.BookNotCreatedException;
 import com.example.bookStore.Utils.BookExceptions.BookNotDeletedException;
 import com.example.bookStore.Utils.BookExceptions.BookNotFoundException;
@@ -48,17 +49,26 @@ public class BookService {
         return bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
     }
 
-    public void save(Book book) throws AuthorNotExistsException {
-        if (checkIfAuthorExist(book.getAuthors())) {
-            bookRepository.save(book);
-        } else {
-            throw new AuthorNotExistsException("Один из авторов не существует, создайте автора");
+    public void save(Book book) throws AuthorNotExistsException, BookAlreadyExistsException {
+        if (!checkIfBookExists(book)) {
+            if (checkIfAuthorExist(book.getAuthors())) {
+                bookRepository.save(book);
+            } else {
+                throw new AuthorNotExistsException("Один из авторов не существует, создайте автора");
+            }
+        } else{
+            throw new BookAlreadyExistsException("Такая книга уже существует");
         }
+
     }
 
-    public void update(int bookId, Book book) {
+    public void update(int bookId, Book book) throws BookAlreadyExistsException{
         book.setBook_id(bookId);
-        bookRepository.save(book);
+        if (!checkIfBookExists(book)) {
+        bookRepository.save(book);}
+        else {
+            throw new BookAlreadyExistsException("Такая книга уже существует");
+        }
     }
 
     public void delete(int bookId) {
@@ -79,4 +89,16 @@ public class BookService {
         }
         return true;
     }
+
+    private boolean checkIfBookExists(Book checkingBook) {
+        for (Book book : bookRepository.findAll()) {
+            if (checkingBook.getTitle().equals(book.getTitle())
+                    && checkingBook.getAuthors().equals(book.getAuthors())
+                    && checkingBook.getISBN().equals(book.getISBN())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

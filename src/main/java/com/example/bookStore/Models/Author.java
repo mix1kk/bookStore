@@ -18,10 +18,10 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "Идентификатор автора", example = "0")
     private int author_id;
-    @NotEmpty
+    @NotEmpty(message = "Поле не должно быть пустым")
     @Schema(description = "Имя автора", example = "Иван")
     private String name;
-    @NotEmpty
+    @NotEmpty(message = "Поле не должно быть пустым")
     @Schema(description = "Фамилия автора", example = "Иванов")
     private String surname;
     @Schema(description = "Отчество автора", example = "Иванович")

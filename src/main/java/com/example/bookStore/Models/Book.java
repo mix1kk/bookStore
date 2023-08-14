@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @Entity
 @Table(name = "book")
@@ -29,4 +31,5 @@ public class Book {
     @NotEmpty(message = "Поле не должно быть пустым")
     @Schema(description = "ISBN книги", example = "978-2-266-11156-0")
     private String ISBN;
+
 }

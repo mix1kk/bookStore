@@ -2,7 +2,12 @@ package com.example.bookStore.Services;
 
 import com.example.bookStore.Models.Author;
 import com.example.bookStore.Models.Book;
+import com.example.bookStore.Repositories.AuthorRepository;
 import com.example.bookStore.Repositories.BookRepository;
+import com.example.bookStore.Utils.AuthorExceptions.AuthorNotExistsException;
+import com.example.bookStore.Utils.AuthorExceptions.AuthorNotFoundException;
+import com.example.bookStore.Utils.BookExceptions.BookAlreadyExistsException;
+import com.example.bookStore.Utils.BookExceptions.BookNotCreatedException;
 import com.example.bookStore.Utils.BookExceptions.BookNotDeletedException;
 import com.example.bookStore.Utils.BookExceptions.BookNotFoundException;
 import jakarta.transaction.Transactional;
@@ -16,39 +21,54 @@ import java.util.Optional;
 @Transactional
 public class BookService {
     private final BookRepository bookRepository;
+    private final AuthorService authorService;
 
     @Autowired
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, AuthorService authorService) {
         this.bookRepository = bookRepository;
+        this.authorService = authorService;
     }
 
     public List<Book> findAll() {
         return bookRepository.findAll();
     }
 
-    public List<Book> findByBookTitle(String bookTitle) {
-        return bookRepository.findByBookTitle(bookTitle);
+    public List<Book> findByTitle(String Title) {
+        return bookRepository.findByTitle(Title);
     }
 
-    public Optional<Book> getBookByISBN(String bookISBN) {
+    public List<Book> findBookByISBN(String bookISBN) {
         return bookRepository.findByISBN(bookISBN);
     }
 
     public List<Book> findBookByAuthor(String author) {
-        return bookRepository.findByAuthor(author);
+        return bookRepository.findByAuthors(author);
     }
 
     public Book findById(int bookId) {
         return bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
     }
 
-    public void save(Book book) {
-        bookRepository.save(book);
+    public void save(Book book) throws AuthorNotExistsException, BookAlreadyExistsException {
+        if (!checkIfBookExists(book)) {
+            if (checkIfAuthorExist(book.getAuthors())) {
+                bookRepository.save(book);
+            } else {
+                throw new AuthorNotExistsException("Один из авторов не существует, создайте автора");
+            }
+        } else{
+            throw new BookAlreadyExistsException("Такая книга уже существует");
+        }
+
     }
 
-    public void update(int bookId, Book book) {
-        book.setBookId(bookId);
-        bookRepository.save(book);
+    public void update(int bookId, Book book) throws BookAlreadyExistsException{
+        book.setBook_id(bookId);
+        if (!checkIfBookExists(book)) {
+        bookRepository.save(book);}
+        else {
+            throw new BookAlreadyExistsException("Такая книга уже существует");
+        }
     }
 
     public void delete(int bookId) {
@@ -60,4 +80,25 @@ public class BookService {
             throw new BookNotDeletedException("Не удалось удалить книгу");
         }
     }
+
+    private boolean checkIfAuthorExist(String authors) {
+        for (String part : authors.split(",")) {
+            if (!authorService.findByShortname(part.trim()).isPresent()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkIfBookExists(Book checkingBook) {
+        for (Book book : bookRepository.findAll()) {
+            if (checkingBook.getTitle().equals(book.getTitle())
+                    && checkingBook.getAuthors().equals(book.getAuthors())
+                    && checkingBook.getISBN().equals(book.getISBN())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

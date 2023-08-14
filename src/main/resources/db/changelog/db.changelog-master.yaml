@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog.yaml
+  - changeSet:
+      id: 1
+      author: postgres
+      changes:
+        - createTable:
+            tableName: author
+            columns:
+              - column:
+                  name: author_id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: varchar
+              - column:
+                  name: surname
+                  type: varchar
+              - column:
+                  name: middlename
+                  type: varchar
+              - column:
+                  name: shortname
+                  type: varchar
+        - addAutoIncrement:
+            catalogName: cat
+            columnDataType: int
+            columnName: author_id
+            defaultOnNull: false
+            generationType: ALWAYS
+            incrementBy: 1
+            schemaName: public
+            startWith: 1
+            tableName: author
+  - changeSet:
+      id: 2
+      author: postgres
+      changes:
+        - createTable:
+            tableName: book
+            columns:
+              - column:
+                  name: book_id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: title
+                  type: varchar
+              - column:
+                  name: userCompany
+                  type: varchar
+              - column:
+                  name: authors
+                  type: varchar
+              - column:
+                  name: ISBN
+                  type: varchar
+        - addAutoIncrement:
+            catalogName: cat
+            columnDataType: int
+            columnName: book_id
+            defaultOnNull: false
+            generationType: ALWAYS
+            incrementBy: 1
+            schemaName: public
+            startWith: 1
+            tableName: book

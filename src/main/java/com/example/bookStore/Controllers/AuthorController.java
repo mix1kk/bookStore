@@ -2,10 +2,7 @@ package com.example.bookStore.Controllers;
 
 import com.example.bookStore.Models.Author;
 import com.example.bookStore.Services.AuthorService;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorErrorResponse;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorNotCreatedException;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorNotDeletedException;
-import com.example.bookStore.Utils.AuthorExceptions.AuthorNotUpdatedException;
+import com.example.bookStore.Utils.AuthorExceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin
 @Tag(name = "Контроллер авторов", description = "Позволяет добавлять, удалять, редактировать авторов")
 @RequestMapping()
 public class AuthorController {
@@ -55,24 +51,33 @@ public class AuthorController {
             }
             throw new AuthorNotCreatedException(errorMsg.toString());
         }
-        authorService.save(author);
+        try {
+            authorService.save(author);
+        } catch (AuthorAlreadyExistsException e) {
+            throw new AuthorNotCreatedException(e.getMessage());
+        }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @Operation(summary = "Редактировать автора")
     @PatchMapping("/author/{id}")
-    public ResponseEntity<HttpStatus> updateAuthor(@RequestBody @Valid Author author, BindingResult bindingResult, @PathVariable("id") int authorId) {
+    public ResponseEntity<HttpStatus> updateAuthor(@RequestBody @Valid Author author, BindingResult bindingResult, @PathVariable("id") int id) {
         if (bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
             List<FieldError> errors = bindingResult.getFieldErrors();
             for (FieldError error : errors) {
                 errorMsg.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("<br>");
             }
-            System.out.println(errorMsg);
             throw new AuthorNotUpdatedException(errorMsg.toString());
         }
-
-        authorService.update(authorId, author);
+        if (id != 0 && authorService.findById(id) == null) {
+            throw new AuthorNotFoundException();
+        }
+        try {
+            authorService.update(id, author);
+        } catch (AuthorAlreadyExistsException e) {
+            throw new AuthorNotUpdatedException(e.getMessage());
+        }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -81,7 +86,7 @@ public class AuthorController {
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") int authorId) {
         authorService.delete(authorId);
         return ResponseEntity.ok(HttpStatus.NO_CONTENT);
-    }
+    }//todo: delete all author books if delete author
 
     @ExceptionHandler
     private ResponseEntity<AuthorErrorResponse> handleException(AuthorNotUpdatedException e) {

@@ -2,6 +2,8 @@ package com.example.bookStore.Models;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -17,11 +19,14 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "Идентификатор книги", example = "0")
     private int book_id;
+    @NotEmpty(message = "Поле не должно быть пустым")
     @Schema(description = "Название книги", example = "20 лет спустя")
     private String title;
-    //authors as string authors id's (format: "authorId1_authorId2_..._authorIdn")
-    @Schema(description = "Авторы", example = "Александр Дюма")
+    @Pattern(regexp = "[A-ZА-Я][a-zа-я]*\\s([A-ZА-Я]\\.)+([,]\\s[A-ZА-Я][a-zа-я]*\\s([A-ZА-Я]\\.)+)*",
+            message = "Неправильный формат: 'Фамилия И.О., Фамилия И.О.'")
+    @Schema(description = "Авторы", example = "Дюма.А.")
     private String authors;
-    @Schema(description = "ISBN книги", example = "ISBN-13: 978-2-266-11156-0")
+    @NotEmpty(message = "Поле не должно быть пустым")
+    @Schema(description = "ISBN книги", example = "978-2-266-11156-0")
     private String ISBN;
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,9 +29,16 @@ public class AuthorService {
         return authorRepository.findById(authorId).orElseThrow(AuthorNotFoundException::new);
     }
 
+    public Optional<Author> findByShortname(String shortname) {
+        return authorRepository.findByShortname(shortname);
+    }
+
     public void save(Author author) {
+        author.setShortname(author.getSurname() + " " + author.getName().substring(0, 1).toUpperCase() + "."
+                + ((author.getMiddlename().equals("")) ? "" : author.getMiddlename().substring(0, 1).toUpperCase() + "."));
         authorRepository.save(author);
     }
+
 
     public void update(int authorId, Author author) {
         author.setAuthor_id(authorId);

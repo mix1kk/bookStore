@@ -1,6 +1,6 @@
 services:
   app:
-    image: 'mix100/konus:1.0.0'
+    image: 'mix100/konus:latest'
     build:
       context: .
     container_name: app
@@ -11,6 +11,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - '8080:8080'
   db:
     image: 'postgres:latest'
     container_name: db

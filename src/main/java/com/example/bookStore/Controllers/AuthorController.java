@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin
 @Tag(name = "Контроллер авторов", description = "Позволяет добавлять, удалять, редактировать авторов")
 @RequestMapping()
 public class AuthorController {
@@ -52,7 +51,11 @@ public class AuthorController {
             }
             throw new AuthorNotCreatedException(errorMsg.toString());
         }
-        authorService.save(author);
+        try {
+            authorService.save(author);
+        } catch (AuthorAlreadyExistsException e) {
+            throw new AuthorNotCreatedException(e.getMessage());
+        }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -67,10 +70,14 @@ public class AuthorController {
             }
             throw new AuthorNotUpdatedException(errorMsg.toString());
         }
-        if (id!=0 && authorService.findById(id) == null) {
+        if (id != 0 && authorService.findById(id) == null) {
             throw new AuthorNotFoundException();
         }
-        authorService.update(id, author);
+        try {
+            authorService.update(id, author);
+        } catch (AuthorAlreadyExistsException e) {
+            throw new AuthorNotUpdatedException(e.getMessage());
+        }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

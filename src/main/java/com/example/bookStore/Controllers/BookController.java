@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @Tag(name = "Контроллер книг", description = "Позволяет добавлять, удалять, редактировать книги")
 @RequestMapping()
 public class BookController {
@@ -41,16 +40,19 @@ public class BookController {
     public List<Book> allBooksByAuthor(@PathVariable("name") String name) {
         return new ArrayList<>(bookService.findBookByAuthor(name));
     }
+
     @Operation(summary = "Получить список всех книг по названию")
     @GetMapping("/books/getByTitle/{title}")
     public List<Book> allBooksByTitle(@PathVariable("title") String title) {
         return new ArrayList<>(bookService.findByTitle(title));
     }
+
     @Operation(summary = "Получить список всех книг по ISBN")
     @GetMapping("/books/getByISBN/{ISBN}")
     public List<Book> allBooksByISBN(@PathVariable("ISBN") String ISBN) {
         return new ArrayList<>(bookService.findBookByISBN(ISBN));
     }
+
     @Operation(summary = "Получить книгу по id")
     @GetMapping("/book/{id}")
     public Book singleBook(@PathVariable("id") int id) {
@@ -68,8 +70,11 @@ public class BookController {
             }
             throw new BookNotCreatedException(errorMsg.toString());
         }
-        try{bookService.save(book);}
-        catch(AuthorNotExistsException e){
+        try {
+            bookService.save(book);
+        } catch (AuthorNotExistsException e) {
+            throw new BookNotCreatedException(e.getMessage());
+        } catch (BookAlreadyExistsException e) {
             throw new BookNotCreatedException(e.getMessage());
         }
         return ResponseEntity.ok(HttpStatus.OK);
@@ -89,7 +94,11 @@ public class BookController {
         if (id != 0 && bookService.findById(id) == null) {
             throw new BookNotFoundException();
         }
-        bookService.update(id, book);
+        try {
+            bookService.update(id, book);
+        } catch (BookAlreadyExistsException e) {
+            throw new BookNotUpdatedException(e.getMessage());
+        }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

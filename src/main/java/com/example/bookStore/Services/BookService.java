@@ -2,7 +2,11 @@ package com.example.bookStore.Services;
 
 import com.example.bookStore.Models.Author;
 import com.example.bookStore.Models.Book;
+import com.example.bookStore.Repositories.AuthorRepository;
 import com.example.bookStore.Repositories.BookRepository;
+import com.example.bookStore.Utils.AuthorExceptions.AuthorNotExistsException;
+import com.example.bookStore.Utils.AuthorExceptions.AuthorNotFoundException;
+import com.example.bookStore.Utils.BookExceptions.BookNotCreatedException;
 import com.example.bookStore.Utils.BookExceptions.BookNotDeletedException;
 import com.example.bookStore.Utils.BookExceptions.BookNotFoundException;
 import jakarta.transaction.Transactional;
@@ -16,10 +20,12 @@ import java.util.Optional;
 @Transactional
 public class BookService {
     private final BookRepository bookRepository;
+    private final AuthorService authorService;
 
     @Autowired
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, AuthorService authorService) {
         this.bookRepository = bookRepository;
+        this.authorService = authorService;
     }
 
     public List<Book> findAll() {
@@ -42,8 +48,12 @@ public class BookService {
         return bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
     }
 
-    public void save(Book book) {
-        bookRepository.save(book);
+    public void save(Book book) throws AuthorNotExistsException {
+        if (checkIfAuthorExist(book.getAuthors())) {
+            bookRepository.save(book);
+        } else {
+            throw new AuthorNotExistsException("Один из авторов не существует, создайте автора");
+        }
     }
 
     public void update(int bookId, Book book) {
@@ -59,5 +69,14 @@ public class BookService {
         if (bookRepository.existsById(bookId)) {
             throw new BookNotDeletedException("Не удалось удалить книгу");
         }
+    }
+
+    private boolean checkIfAuthorExist(String authors) {
+        for (String part : authors.split(",")) {
+            if (!authorService.findByShortname(part.trim()).isPresent()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

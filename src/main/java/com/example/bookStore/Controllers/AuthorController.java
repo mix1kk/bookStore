@@ -79,7 +79,7 @@ public class AuthorController {
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") int authorId) {
         authorService.delete(authorId);
         return ResponseEntity.ok(HttpStatus.NO_CONTENT);
-    }
+    }//todo: delete all author books if delete author
 
     @ExceptionHandler
     private ResponseEntity<AuthorErrorResponse> handleException(AuthorNotUpdatedException e) {

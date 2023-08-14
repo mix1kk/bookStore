@@ -68,7 +68,10 @@ public class BookController {
             }
             throw new BookNotCreatedException(errorMsg.toString());
         }
-        bookService.save(book);
+        try{bookService.save(book);}
+        catch(AuthorNotExistsException e){
+            throw new BookNotCreatedException(e.getMessage());
+        }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -81,10 +84,9 @@ public class BookController {
             for (FieldError error : errors) {
                 errorMsg.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("<br>");
             }
-
             throw new BookNotUpdatedException(errorMsg.toString());
         }
-        if (id!=0 && bookService.findById(id) == null) {
+        if (id != 0 && bookService.findById(id) == null) {
             throw new BookNotFoundException();
         }
         bookService.update(id, book);

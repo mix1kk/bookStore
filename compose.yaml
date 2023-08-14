@@ -1,6 +1,19 @@
 services:
+#  app:
+#    image: 'mix100/konus:1.0.0'
+#    build:
+#      context: .
+#    container_name: app
+#    depends_on:
+#      - myDatabase
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://myDatabase:5432/postgres
+#      - SPRING_DATASOURCE_USERNAME=postgres
+#      - SPRING_DATASOURCE_PASSWORD=postgres
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
   postgres:
     image: 'postgres:latest'
+    container_name: myDatabase
     environment:
       - 'POSTGRES_DB=mydatabase'
       - 'POSTGRES_PASSWORD=postgres'
